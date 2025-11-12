@@ -1,1 +1,68 @@
+const int buttonPin = 2;  
+const int ledPin = 3;      
+
+int buttonState;          
+int lastButtonState = HIGH; 
+int mode = 1;              // Start with mode 1 (steady light)
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 50; // 50ms debounce
+unsigned long previousMillis = 0; // For blinking timing
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP); // Button to GND
+}
+
+void loop() {
+  // Read button with debounce
+  int reading = digitalRead(buttonPin);
+
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading == LOW && buttonState == HIGH) {
+      // Button just pressed
+      mode++;
+      if (mode > 4) mode = 1;  // Loop back to mode 1
+    }
+    buttonState = reading;
+  }
+  lastButtonState = reading;
+
+  // LED behavior depending on mode
+  unsigned long currentMillis = millis();
+
+  switch (mode) {
+    state 1:
+      // Steady ON
+      digitalWrite(ledPin, HIGH);
+      break;
+
+    state 2:
+      // Slow blink (1 second ON, 1 second OFF)
+      if (currentMillis - previousMillis >= 1000) {
+        previousMillis = currentMillis;
+        digitalWrite(ledPin, !digitalRead(ledPin));
+      }
+      break;
+
+    state 3:
+      // Medium blink (0.5s ON, 0.5s OFF)
+      if (currentMillis - previousMillis >= 500) {
+        previousMillis = currentMillis;
+        digitalWrite(ledPin, !digitalRead(ledPin));
+      }
+      break;
+
+    state 4:
+      // Fast blink (0.1s ON, 0.1s OFF)
+      if (currentMillis - previousMillis >= 100) {
+        previousMillis = currentMillis;
+        digitalWrite(ledPin, !digitalRead(ledPin));
+      }
+      break;
+  }
+}
 
